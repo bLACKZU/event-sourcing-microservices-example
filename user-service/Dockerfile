@@ -7,7 +7,8 @@ RUN mvn clean package -DskipTests
 
 FROM bellsoft/liberica-runtime-container:jre-21-musl 
 WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
+ARG JAR_FILE
+COPY --from=builder /app/target/${JAR_FILE} app.jar
 RUN groupadd -r -g 2000 java && useradd -m -d /home/java/ -u 2000 -r -g java java
 RUN chown -R java:java /app
 USER java
