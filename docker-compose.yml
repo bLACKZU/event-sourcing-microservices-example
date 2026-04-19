@@ -1,98 +1,11 @@
-version: "3.3"
-
 services:
-
-  discovery-service:
+  neo4j:
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      PROMETHEUS_URL: "prometheus-pushgateway:9091"
-    image: hyperskale/discovery-service:0.0.1-SNAPSHOT
+      NEO4J_AUTH: none
+    image: neo4j:3.5.0
     ports:
-      - "8761:8761/tcp"
-    deploy:
-      replicas: 1
-
-  edge-service:
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      PROMETHEUS_URL: "prometheus-pushgateway:9091"
-    image: hyperskale/edge-service:0.0.1-SNAPSHOT
-    ports:
-      - "9000:9000/tcp"
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '1000mb'
-        reservations:
-          cpus: '0.1'
-          memory: '250mb'
-
-  friend-service:
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      PROMETHEUS_URL: "prometheus-pushgateway:9091"
-    image: hyperskale/friend-service:0.0.2-SNAPSHOT
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '1000mb'
-        reservations:
-          cpus: '0.1'
-          memory: '250mb'
-
-  user-service:
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      PROMETHEUS_URL: "prometheus-pushgateway:9091"
-    image: hyperskale/user-service:0.0.2-SNAPSHOT
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          memory: '1000mb'
-          cpus: '0.5'
-        reservations:
-          cpus: '0.1'
-          memory: '250mb'
-
-  recommendation-service:
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      PROMETHEUS_URL: "prometheus-pushgateway:9091"
-    image: hyperskale/recommendation-service:0.0.1-SNAPSHOT
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: '1000mb'
-        reservations:
-          cpus: '0.1'
-          memory: '250mb'
-
-  kafka:
-    environment:
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
-      KAFKA_BROKER_ID: 1
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
-    image: confluentinc/cp-kafka:latest
-    ports:
-      - "29092:29092/tcp"
-    deploy:
-      replicas: 1
-
-  zookeeper:
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 32181
-      ZOOKEEPER_TICK_TIME: 2000
-    image: confluentinc/cp-zookeeper:latest
-    ports:
-      - "32181:32181/tcp"
+      - "7474:7474/tcp"
+      - "7687:7687/tcp"
     deploy:
       replicas: 1
 
@@ -114,12 +27,130 @@ services:
     deploy:
       replicas: 1
 
-  neo4j:
+  kafka:
     environment:
-      NEO4J_AUTH: none
-    image: neo4j:3.5.0
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
+    image: confluentinc/cp-kafka:latest
     ports:
-      - "7474:7474/tcp"
-      - "7687:7687/tcp"
+      - "29092:29092/tcp"
     deploy:
       replicas: 1
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 32181
+      ZOOKEEPER_TICK_TIME: 2000
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - "32181:32181/tcp"
+    deploy:
+      replicas: 1
+
+  discovery-service:
+    build:
+      context: .
+      dockerfile: discovery-service/Dockerfile
+      args:
+        JAR_FILE: discovery-service-0.0.1-SNAPSHOT.jar
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8761:8761/tcp"
+    deploy:
+      replicas: 1
+    
+  
+  edge-service:
+    build:
+      context: .
+      dockerfile: edge-service/Dockerfile
+      args:
+        JAR_FILE: edge-service-0.0.1-SNAPSHOT.jar
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "9000:9000/tcp"
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1000mb'
+        reservations:
+          cpus: '0.1'
+          memory: '250mb'
+    depends_on:
+      - discovery-service
+  
+
+  friend-service:
+    build:
+      context: .
+      dockerfile: friend-service/Dockerfile
+      args:
+        JAR_FILE: friend-service-0.0.2-SNAPSHOT.jar
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1000mb'
+        reservations:
+          cpus: '0.1'
+          memory: '250mb'
+    depends_on:
+      - discovery-service
+      - kafka
+      - friend-db
+
+  user-service:
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+      args:
+        JAR_FILE: user-service-0.0.2-SNAPSHOT.jar
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: '1000mb'
+          cpus: '0.5'
+        reservations:
+          cpus: '0.1'
+          memory: '250mb'
+    depends_on:
+      - discovery-service
+      - kafka
+      - user-db
+      
+
+  recommendation-service:
+    build:
+      context: .
+      dockerfile: recommendation-service/Dockerfile
+      args:
+        JAR_FILE: recommendation-service-0.0.1-SNAPSHOT.jar
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1000mb'
+        reservations:
+          cpus: '0.1'
+          memory: '250mb'
+    depends_on:
+      - discovery-service
+      - kafka
+      - neo4j
