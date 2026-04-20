@@ -30,10 +30,11 @@ services:
   kafka:
     environment:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
-    image: confluentinc/cp-kafka:latest
+    image: wurstmeister/kafka:2.13-2.8.1
     ports:
       - "29092:29092/tcp"
     deploy:
