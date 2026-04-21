@@ -1,0 +1,47 @@
+{{- range .Values.microservices }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-{{ .name }}
+  labels:
+    {{ .image.labels | nindent 4 }}
+spec:
+  replicas: {{ $.Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{ .image.labels | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{ .image.labels | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "event-sourcing-microservices.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}-{{ .name }}
+          securityContext:
+            {{- toYaml $.Values.securityContext | nindent 12 }}
+          image: {{ .image.repository }}:{{ .image.tag | default .Chart.AppVersion }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          env:
+            {{- toYaml .env | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: {{ .service.port }}
+              protocol: TCP
+          startupProbe:
+            {{- toYaml $.Values.startupProbe | nindent 12 }}
+          livenessProbe:
+            {{- toYaml $.Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml $.Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml $.Values.resources | nindent 12 }}
+          {{- with $.Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with $.Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end}}
