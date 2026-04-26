@@ -26,8 +26,8 @@ logging:
 ---
 postgres.port: 5432
 postgres.host: user-db
-postgres.url: jdbc:postgresql://${postgres.host:localhost}:${postgres.port}/
-postgres.database-name: postgres
+postgres.url: jdbc:postgresql://user-db:5432/userdb
+postgres.database-name: userdb
 spring:
   config.activate.on-profile: development
   datasource:
