@@ -1,0 +1,15 @@
+dependencies:
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 26.0.0
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 15.5.0
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 15.5.0
+- name: neo4j
+  repository: https://neo4j.github.io/helm-charts/
+  version: 5.11.0
+digest: sha256:73c4a207117c6c21d08420dacbb99c393d7865916dabdd33debbd5f4afd82204
+generated: "2026-04-26T15:12:37.4514589+05:30"
