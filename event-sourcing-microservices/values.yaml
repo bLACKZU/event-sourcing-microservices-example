@@ -115,6 +115,7 @@ microservices:
       # If not set and create is true, a name is generated using the fullname template
       name: "edge-service-sa"
 
+replicaCount: 1
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 2000
@@ -149,6 +150,27 @@ kafka:
     KAFKA_BROKER_ID: 1
     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
+
+neo4j:
+  neo4j:
+    name: neo4j
+    fullnameOverride: neo4j
+    image:
+      repository: neo4j
+      tag: 5.11.0
+    resources:
+      cpu: "0.5"
+      memory: "2Gi"
+    password: ""
+  volumes:
+    data:
+      mode: defaultStorageClass
+      defaultStorageClass:
+        accessModes:
+          - ReadWriteOnce
+        requests:
+          storage: 10Gi
+
 
 
 image:

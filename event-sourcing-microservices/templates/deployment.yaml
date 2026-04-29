@@ -2,27 +2,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}-{{ .name }}
+  name: {{ $.Chart.Name }}-{{ .name }}
   labels:
-    {{ .image.labels | nindent 4 }}
+    {{- toYaml .image.labels | nindent 4 }}
 spec:
   replicas: {{ $.Values.replicaCount }}
   selector:
     matchLabels:
-      {{ .image.labels | nindent 6 }}
+      {{- toYaml .image.labels | nindent 6 }}
   template:
     metadata:
       labels:
-        {{ .image.labels | nindent 8 }}
+        {{- toYaml .image.labels | nindent 8 }}
     spec:
       serviceAccountName: {{ include "event-sourcing-microservices.serviceAccountName" . }}
       securityContext:
         {{- toYaml $.Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}-{{ .name }}
+        - name: {{ $.Chart.Name }}-{{ .name }}
           securityContext:
             {{- toYaml $.Values.securityContext | nindent 12 }}
-          image: {{ .image.repository }}:{{ .image.tag | default .Chart.AppVersion }}
+          image: {{ .image.repository }}:{{ .image.tag | default $.Chart.AppVersion }}
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           env:
             {{- toYaml .env | nindent 12 }}

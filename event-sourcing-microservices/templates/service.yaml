@@ -1,15 +1,19 @@
+{{- range .Values.microservices }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "event-sourcing-microservices.fullname" . }}
+  name: {{ include "event-sourcing-microservices.fullname" $ }}-{{ .name }}
   labels:
-    {{- include "event-sourcing-microservices.labels" . | nindent 4 }}
+    {{- toYaml .image.labels | nindent 4 }}
+    {{- include "event-sourcing-microservices.labels" $ | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .service.port }}
       targetPort: http
       protocol: TCP
       name: http
   selector:
-    {{- include "event-sourcing-microservices.selectorLabels" . | nindent 4 }}
+    {{- toYaml .image.labels | nindent 4 }}
+    {{- include "event-sourcing-microservices.selectorLabels" $ | nindent 4 }}
+{{- end }}
