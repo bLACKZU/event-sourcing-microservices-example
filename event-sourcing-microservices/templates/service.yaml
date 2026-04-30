@@ -16,4 +16,5 @@ spec:
   selector:
     {{- toYaml .image.labels | nindent 4 }}
     {{- include "event-sourcing-microservices.selectorLabels" $ | nindent 4 }}
+---
 {{- end }}

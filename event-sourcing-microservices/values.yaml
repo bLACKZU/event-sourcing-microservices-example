@@ -144,12 +144,12 @@ kafka:
   fullnameOverride: kafka
   image:
     tag: 2.8.1
-  config:
-    KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
-    KAFKA_LISTENERS: PLAINTEXT://kafka:29092
-    KAFKA_BROKER_ID: 1
-    KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
+  config: |-
+    listeners=PLAINTEXT://:29092
+    advertised.listeners=PLAINTEXT://kafka:29092
+    broker.id=1
+    offsets.topic.replication.factor=1
+    zookeeper.connect=zookeeper:32181
 
 neo4j:
   neo4j:
