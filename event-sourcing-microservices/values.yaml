@@ -123,22 +123,58 @@ podSecurityContext:
   fsGroup: 2000
   allowPrivilegeEscalation: false
 
-user-db:
-  fullnameOverride: user-db
-  image:
-    tag: 14
-  auth:
-    password: example
-    database: userdb
+db:
+  - name: user-db
+    fullnameOverride: user-db
+    auth:
+      database: userdb
+dbsecurityContext:
+  fsGroup: 1001
+dbenv:
+  - name: BITNAMI_DEBUG
+    value: "false"
+  # PostgreSQL configuration
+  - name: POSTGRESQL_VOLUME_DIR
+    value: "/bitnami/postgresql"
+  - name: PGDATA
+    value: "/bitnami/postgresql/data"
+  - name: POSTGRES_USER
+    value: "postgres"
+  - name: POSTGRES_DB
+    value: "postgres"
+  - name: POSTGRESQL_LOG_HOSTNAME
+    value: "true"
+  - name: POSTGRESQL_LOG_CONNECTIONS
+    value: "false"
+  - name: POSTGRESQL_LOG_DISCONNECTIONS
+    value: "false"
+  - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
+    value: "off"
+  - name: POSTGRESQL_CLIENT_MIN_MESSAGES
+    value: "error"
+  - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
+    value: "pgaudit, repmgr"
+  - name: POSTGRESQL_ENABLE_TLS
+    value: "no"
+  - name: REPMGR_UPGRADE_EXTENSION
+    value: "no"
+  - name: REPMGR_PGHBA_TRUST_ALL
+    value: "no"
+  - name: REPMGR_MOUNTED_CONF_DIR
+    value: "/bitnami/repmgr/conf"
+  - name: REPMGR_LOG_LEVEL
+    value: "NOTICE"
+  - name: REPMGR_CONNECT_TIMEOUT
+    value: "5"
+  - name: REPMGR_RECONNECT_ATTEMPTS
+    value: "3"
+  - name: REPMGR_RECONNECT_INTERVAL
+    value: "5"
+  - name: REPMGR_USERNAME
+    value: "repmgr"
+  - name: REPMGR_DATABASE
+    value: "repmgr"
 
-      
-friend-db:
-  fullnameOverride: friend-db
-  image:
-    tag: 14
-  auth:
-    password: example
-    database: frienddb
 
 kafka:
   fullnameOverride: kafka

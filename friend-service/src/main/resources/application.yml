@@ -102,7 +102,6 @@ postgres.port: 5432
 postgres.host: friend-db
 postgres.database-name: frienddb
 postgres.url: jdbc:postgresql://friend-db:5432/frienddb
-postgres.password: example
 postgres.username: postgres
 prometheus.push.enabled: false
 spring:

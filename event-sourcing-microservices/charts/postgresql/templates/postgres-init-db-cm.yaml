@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "postgresql.fullname" . }}-init-scripts
+data:
+  init-databases.sh: |
+    #!/bin/bash
+    set -e
+    
+    # This script runs only on the PRIMARY node during first initialization
+    # The databases will be automatically replicated to standby nodes
+    
+    echo "Checking if custom databases need to be created..."
+    
+    # Wait for PostgreSQL to be ready
+    until pg_isready -U postgres -h localhost; do
+      echo "Waiting for PostgreSQL to start..."
+      sleep 2
+    done
+    
+    # Create databases if they don't exist
+    psql -v ON_ERROR_STOP=1 --username "postgres" <<-EOSQL
+      -- Create userdb
+      SELECT 'CREATE DATABASE userdb'
+      WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'userdb')
+      \gexec
+      
+      -- Create frienddb
+      SELECT 'CREATE DATABASE frienddb'
+      WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'frienddb')
+      \gexec
+      
+    EOSQL
+    
+    echo "Database initialization complete!"
+    echo "Available databases:"
+    psql -U postgres -c '\l'
