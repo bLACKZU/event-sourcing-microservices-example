@@ -25,15 +25,7 @@ appVersion: "1.16.0"
 
 
 dependencies:
-  - name: kafka
-    version: 26.0.0
-    repository: "https://charts.bitnami.com/bitnami"
   - name: postgresql
-    alias: user-db
-    version: 0.1.0
-    repository: "file://./charts/postgresql"
-  - name: postgresql
-    alias: friend-db
     version: 0.1.0
     repository: "file://./charts/postgresql"
   - name: neo4j

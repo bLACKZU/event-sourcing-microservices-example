@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: "{{ include "postgresql.fullname" . }}-sts"
+  name: {{ include "postgresql.fullname" . }}-sts
 spec:
-  serviceName: postgres-headless-svc
+  serviceName: {{ include "postgresql.fullname" . }}-svc
   replicas: 2
   selector:
     matchLabels:
@@ -52,18 +52,22 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: REPMGR_PARTNER_NODES
-              value: "{{ include "postgresql.fullname" . }}-sts-0.postgres-headless-svc.$(REPMGR_NAMESPACE).svc.cluster.local,{{ include "postgresql.fullname" . }}-sts-1.postgres-headless-svc.$(REPMGR_NAMESPACE).svc.cluster.local"
+              value: "{{ include "postgresql.fullname" . }}-sts-0.{{ include "postgresql.fullname" . }}-svc.$(REPMGR_NAMESPACE).svc.cluster.local,{{ include "postgresql.fullname" . }}-sts-1.{{ include "postgresql.fullname" . }}-svc.$(REPMGR_NAMESPACE).svc.cluster.local"
             - name: REPMGR_PRIMARY_HOST
-              value: "{{ include "postgresql.fullname" . }}-sts-0.postgres-headless-svc.$(REPMGR_NAMESPACE).svc.cluster.local"
+              value: "{{ include "postgresql.fullname" . }}-sts-0.{{ include "postgresql.fullname" . }}-svc.$(REPMGR_NAMESPACE).svc.cluster.local"
             - name: REPMGR_NODE_NAME
               value: "$(MY_POD_NAME)"
             - name: REPMGR_NODE_NETWORK_NAME
-              value: "$(MY_POD_NAME).postgres-headless-svc.$(REPMGR_NAMESPACE).svc.cluster.local"
+              value: "$(MY_POD_NAME).{{ include "postgresql.fullname" . }}-svc.$(REPMGR_NAMESPACE).svc.cluster.local"
             - name: REPMGR_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "postgresql.fullname" . }}-secrets
                   key: repmgr-password
+          ports:
+            - name: postgresql
+              containerPort: 5432
+              protocol: TCP
           livenessProbe:
             exec:
               command:

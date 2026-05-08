@@ -123,11 +123,6 @@ podSecurityContext:
   fsGroup: 2000
   allowPrivilegeEscalation: false
 
-db:
-  - name: user-db
-    fullnameOverride: user-db
-    auth:
-      database: userdb
 dbsecurityContext:
   fsGroup: 1001
 dbenv:
