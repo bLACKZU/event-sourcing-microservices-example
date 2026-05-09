@@ -98,7 +98,6 @@ spec:
               subPath: pre-stop.sh
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d
-              subPath: init-databases.sh
       volumes:
         - name: hooks-scripts
           configMap:
