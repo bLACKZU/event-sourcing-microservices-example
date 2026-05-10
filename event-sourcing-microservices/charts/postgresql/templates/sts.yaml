@@ -4,7 +4,7 @@ metadata:
   name: {{ include "postgresql.fullname" . }}-sts
 spec:
   serviceName: {{ include "postgresql.fullname" . }}-svc
-  replicas: 2
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: postgres
@@ -13,7 +13,8 @@ spec:
       labels:
         app: postgres
     spec:
-      securityContext: {{ .Values.dbsecurityContext | nindent 2 }}
+      securityContext: 
+        {{- toYaml .Values.dbsecurityContext | nindent 8 }}
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -41,8 +42,13 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "postgresql.fullname" . }}-secrets
+                  name: {{ .Values.existingSecret | default (include "postgresql.fullname" .) | printf "%s-secrets" }}
                   key: postgresql-password
+            - name: REPMGR_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.existingSecret | default (include "postgresql.fullname" .) | printf "%s-secrets" }}
+                  key: repmgr-password
             - name: MY_POD_NAME
               valueFrom:
                 fieldRef:
@@ -51,19 +57,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: REPMGR_PARTNER_NODES
-              value: "{{ include "postgresql.fullname" . }}-sts-0.{{ include "postgresql.fullname" . }}-svc.$(REPMGR_NAMESPACE).svc.cluster.local,{{ include "postgresql.fullname" . }}-sts-1.{{ include "postgresql.fullname" . }}-svc.$(REPMGR_NAMESPACE).svc.cluster.local"
-            - name: REPMGR_PRIMARY_HOST
-              value: "{{ include "postgresql.fullname" . }}-sts-0.{{ include "postgresql.fullname" . }}-svc.$(REPMGR_NAMESPACE).svc.cluster.local"
             - name: REPMGR_NODE_NAME
               value: "$(MY_POD_NAME)"
             - name: REPMGR_NODE_NETWORK_NAME
               value: "$(MY_POD_NAME).{{ include "postgresql.fullname" . }}-svc.$(REPMGR_NAMESPACE).svc.cluster.local"
-            - name: REPMGR_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "postgresql.fullname" . }}-secrets
-                  key: repmgr-password
+            - name: REPMGR_PARTNER_NODES
+              value: {{ $name := include "postgresql.fullname" . }}{{ $replicas := int .Values.replicaCount }}{{ range $i := until $replicas }}{{ if $i }},{{ end }}{{ $name }}-sts-{{ $i }}.{{ $name }}-svc.$(REPMGR_NAMESPACE).svc.cluster.local{{ end }}
+            - name: REPMGR_PRIMARY_HOST
+              value: "{{ include "postgresql.fullname" . }}-sts-0.{{ include "postgresql.fullname" . }}-svc.$(REPMGR_NAMESPACE).svc.cluster.local"
           ports:
             - name: postgresql
               containerPort: 5432
@@ -85,7 +86,7 @@ spec:
                 - bash
                 - -ec
                 - 'PGPASSWORD=$POSTGRES_PASSWORD psql -w -U "postgres" -d "postgres"  -h 127.0.0.1 -c "SELECT 1"'
-            initialDelaySeconds: 5
+            initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
             successThreshold: 1

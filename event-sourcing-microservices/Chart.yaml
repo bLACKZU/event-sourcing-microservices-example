@@ -28,7 +28,10 @@ dependencies:
   - name: postgresql
     version: 0.1.0
     repository: "file://./charts/postgresql"
-  - name: neo4j
-    alias: neo4j
-    version: 5.11.0
-    repository: "https://neo4j.github.io/helm-charts/"
+  - name: kafka
+    version: 0.1.0
+    repository: "file://./charts/kafka"
+  # - name: neo4j
+  #   alias: neo4j
+  #   version: 5.11.0
+  #   repository: "https://neo4j.github.io/helm-charts/"
