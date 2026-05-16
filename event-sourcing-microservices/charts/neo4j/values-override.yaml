@@ -1,0 +1,18 @@
+
+neo4j:
+  name: neo4j
+  fullnameOverride: neo4j
+  edition: "community"
+  resources:
+    cpu: "0.5"
+    memory: "2Gi"
+config:
+  dbms.security.auth_enabled: "false"
+volumes:
+  data:
+    mode: defaultStorageClass
+    defaultStorageClass:
+      accessModes:
+        - ReadWriteOnce
+      requests:
+        storage: 1Gi

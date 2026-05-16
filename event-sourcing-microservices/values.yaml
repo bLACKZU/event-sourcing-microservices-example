@@ -177,8 +177,10 @@ kafka:
   fullnameOverride: kafka
   image:
     registry: docker.io
-    repository: bitnami/kafka
-    tag: 3.6.0-debian-11-r0
+    repository: apache/kafka
+    tag: 4.3.0-rc0
+  controller:
+    replicaCount: 1
   config: |-
     listeners=PLAINTEXT://:29092
     advertised.listeners=PLAINTEXT://kafka:29092
@@ -190,13 +192,12 @@ neo4j:
   neo4j:
     name: neo4j
     fullnameOverride: neo4j
-    image:
-      repository: neo4j
-      tag: 5.11.0
+    edition: "community"
     resources:
       cpu: "0.5"
       memory: "2Gi"
-    password: ""
+  config:
+    dbms.security.auth_enabled: "false"
   volumes:
     data:
       mode: defaultStorageClass
@@ -204,7 +205,7 @@ neo4j:
         accessModes:
           - ReadWriteOnce
         requests:
-          storage: 10Gi
+          storage: 1Gi
 
 
 
