@@ -15,11 +15,16 @@ microservices:
       - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
         value: "kafka"
       - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTBROKERPORT
-        value: "29092"
+        value: "9092"
       - name: SPRING_PROFILES_ACTIVE
         value: kubernetes
       - name: KUBERNETES_TRUST_CERTIFICATES
         value: "true"
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: cqrs-postgresql-secrets 
+            key: postgresql-password
     serviceAccount:
       create: true
       automount: true
@@ -31,7 +36,7 @@ microservices:
   - name: friend-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-friend-service
-      tag: latest
+      tag: v5
       labels:
         app: friend-service
     service:
@@ -40,11 +45,16 @@ microservices:
       - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
         value: "kafka"
       - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTBROKERPORT
-        value: "29092"
+        value: "9092"
       - name: SPRING_PROFILES_ACTIVE
         value: kubernetes
       - name: KUBERNETES_TRUST_CERTIFICATES
         value: "true"
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: cqrs-postgresql-secrets 
+            key: postgresql-password
     serviceAccount:
       create: true
       automount: true
@@ -54,7 +64,7 @@ microservices:
   - name: recommendation-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-recommendation-service
-      tag: latest
+      tag: v5
       labels:
         app: recommendation-service
     service:
@@ -63,7 +73,7 @@ microservices:
       - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
         value: "kafka"
       - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULTBROKERPORT
-        value: "29092"
+        value: "9092"
       - name: SPRING_PROFILES_ACTIVE
         value: kubernetes
       - name: KUBERNETES_TRUST_CERTIFICATES
@@ -197,14 +207,9 @@ kafka:
         tag: 12-debian-12-r50
         digest: ""
         pullPolicy: IfNotPresent
-
-
-  config: |-
-    listeners=PLAINTEXT://:29092
-    advertised.listeners=PLAINTEXT://kafka:29092
-    broker.id=1
-    offsets.topic.replication.factor=1
-    zookeeper.connect=zookeeper:32181
+  config:
+    listeners: PLAINTEXT://:9092
+    advertised.listeners: PLAINTEXT://kafka:9092
 
 neo4j:  
   neo4j:
@@ -214,16 +219,16 @@ neo4j:
     resources:
       cpu: "0.5"
       memory: "2Gi"
-    config:
-      dbms.security.auth_enabled: "false"
-    volumes:
-      data:
-        mode: defaultStorageClass
-        defaultStorageClass:
-          accessModes:
-            - ReadWriteOnce
-          requests:
-            storage: 1Gi
+  config:
+    dbms.security.auth_enabled: "false"
+  volumes:
+    data:
+      mode: defaultStorageClass
+      defaultStorageClass:
+        accessModes:
+          - ReadWriteOnce
+        requests:
+          storage: 1Gi
 
 image:
   pullPolicy: IfNotPresent

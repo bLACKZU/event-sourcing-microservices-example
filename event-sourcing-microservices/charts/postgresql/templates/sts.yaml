@@ -97,16 +97,10 @@ spec:
             - name: hooks-scripts
               mountPath: /pre-stop.sh
               subPath: pre-stop.sh
-            - name: init-scripts
-              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: hooks-scripts
           configMap:
             name: {{ include "postgresql.fullname" . }}-configmap
-            defaultMode: 0755
-        - name: init-scripts
-          configMap:
-            name: {{ include "postgresql.fullname" . }}-init-scripts
             defaultMode: 0755
   volumeClaimTemplates:
     - metadata:

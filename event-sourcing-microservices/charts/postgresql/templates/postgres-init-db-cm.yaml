@@ -13,13 +13,13 @@ data:
     echo "Checking if custom databases need to be created..."
     
     # Wait for PostgreSQL to be ready
-    until pg_isready -U postgres -h localhost; do
+    until pg_isready -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}"; do
       echo "Waiting for PostgreSQL to start..."
       sleep 2
     done
     
     # Create databases if they don't exist
-    psql -v ON_ERROR_STOP=1 --username "postgres" <<-EOSQL
+    psql -v ON_ERROR_STOP=1 --username "${PGUSER}" -h "${PGHOST}" -p "${PGPORT}" <<-EOSQL
       -- Create userdb
       SELECT 'CREATE DATABASE userdb'
       WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'userdb')
@@ -34,4 +34,4 @@ data:
     
     echo "Database initialization complete!"
     echo "Available databases:"
-    psql -U postgres -c '\l'
+    psql -h "${PGHOST}" -p "${PGPORT}" -U "${PGUSER}" -d postgres -c '\l'

@@ -5,3 +5,7 @@
 dbsecurityContext: {}
 dbenv: []
 existingSecret: ""
+
+# Enable automatic database initialization via Job
+initDatabasesJob:
+  enabled: true
