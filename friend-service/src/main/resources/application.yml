@@ -98,33 +98,42 @@ eureka:
     serviceUrl:
       defaultZone: http://discovery-service:8761/eureka/
 ---
-postgres.port: 5432
-postgres.host: pgpool-svc
-postgres.database-name: frienddb
-postgres.url: jdbc:postgresql://pgpool-svc:5432/frienddb
-postgres.username: postgres
-prometheus.push.enabled: false
 spring:
-  profiles: kubernetes
+  config:
+    activate:
+      on-profile: kubernetes
   cloud:
     stream:
       kafka:
         binder:
-          brokers: kafka
-          defaultBrokerPort: 9092
+          brokers: kafka:9092
   datasource:
-    url: ${postgres.url}
-    data-username: postgres
-    data-password: ${POSTGRES_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-    xa:
-      data-source-class-name: org.postgresql.xa.PGXADataSource
-  liquibase:
-    url: ${postgres.url}
-    user: ${postgres.username}
+    username: postgres
     password: ${POSTGRES_PASSWORD}
-ribbon.eureka.enabled: false
-eureka.client.enabled: false
+    url: jdbc:postgresql://pgpool-svc:5432/frienddb
+  r2dbc:
+    url: r2dbc:postgresql://pgpool-svc:5432/frienddb
+    username: postgres
+    password: ${POSTGRES_PASSWORD}
+  liquibase:
+    url: jdbc:postgresql://pgpool-svc:5432/frienddb
+    user: postgres
+    password: ${POSTGRES_PASSWORD}
+postgres:
+  port: 5432
+  host: pgpool-svc
+  database-name: frienddb
+  url: jdbc:postgresql://pgpool-svc:5432/frienddb
+  username: postgres             # ← Now under kubernetes profile
+prometheus:
+  push:
+    enabled: true
+ribbon:
+  eureka:
+    enabled: false
+eureka:
+  client:
+    enabled: false
 ---
 postgres.port: 5432
 postgres.host: localhost

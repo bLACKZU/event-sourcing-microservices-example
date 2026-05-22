@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.4
 FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /app
 COPY pom.xml .
@@ -6,14 +7,13 @@ COPY edge-service/pom.xml ./edge-service/pom.xml
 COPY friend-service/pom.xml ./friend-service/pom.xml
 COPY user-service/pom.xml ./user-service/pom.xml
 COPY recommendation-service/pom.xml ./recommendation-service/pom.xml
-RUN mvn dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 mvn dependency:go-offline
 COPY friend-service/src ./friend-service/src
-RUN mvn clean package -DskipTests -pl friend-service -Ddockerfile.skip=true
+RUN --mount=type=cache,target=/root/.m2 mvn package -DskipTests -pl friend-service -Ddockerfile.skip=true
 
 FROM eclipse-temurin:21-jre 
 WORKDIR /app
-ARG JAR_FILE
-COPY --from=builder /app/friend-service/target/${JAR_FILE} app.jar
+COPY --from=builder /app/friend-service/target/*.jar app.jar
 RUN groupadd -r -g 2000 java && useradd -m -d /home/java/ -u 2000 -r -g java java
 RUN chown -R java:java /app
 USER java

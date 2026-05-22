@@ -198,6 +198,15 @@ kafka:
     replicaCount: 1
     persistence:
       enabled: true
+  listeners:
+    client:
+      protocol: PLAINTEXT
+    interbroker:
+      protocol: PLAINTEXT
+    controller:
+      protocol: PLAINTEXT
+    external:
+      protocol: PLAINTEXT
   defaultInitContainers:
     volumePermissions:
       enabled: false
@@ -207,9 +216,6 @@ kafka:
         tag: 12-debian-12-r50
         digest: ""
         pullPolicy: IfNotPresent
-  config:
-    listeners: PLAINTEXT://:9092
-    advertised.listeners: PLAINTEXT://kafka:9092
 
 neo4j:  
   neo4j:
