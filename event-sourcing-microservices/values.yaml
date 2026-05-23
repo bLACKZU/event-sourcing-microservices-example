@@ -6,7 +6,7 @@ microservices:
   - name: user-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-user-service
-      tag: latest
+      tag: v5
       labels:
         app: user-service
     service:
