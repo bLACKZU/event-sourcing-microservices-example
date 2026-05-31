@@ -103,8 +103,41 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
-          url-expression: "'http://'+serviceId"
+          enabled: false
+      routes:
+      - id: friend-service
+        uri: lb://cqrs-event-sourcing-microservices-friend-service
+        predicates:
+        - name: Path
+          args:
+            pattern: "/friend/**"
+        filters:
+        - name: RewritePath
+          args:
+            regexp: "/friend/(?<remaining>.*)"
+            replacement: "/${remaining}"
+      - id: user-service
+        uri: lb://cqrs-event-sourcing-microservices-user-service
+        predicates:
+        - name: Path
+          args:
+            pattern: "/user/**"
+        filters:
+        - name: RewritePath
+          args:
+            regexp: "/user/(?<remaining>.*)"
+            replacement: "/${remaining}"
+      - id: recommendation-service
+        uri: lb://cqrs-event-sourcing-microservices-recommendation-service
+        predicates:
+        - name: Path
+          args:
+            pattern: "/recommendation/**"
+        filters:
+        - name: RewritePath
+          args:
+            regexp: "/recommendation/(?<remaining>.*)"
+            replacement: "/${remaining}"
 kubernetes.trust.certificates: true
 # disable eureka
 ribbon.eureka.enabled: false

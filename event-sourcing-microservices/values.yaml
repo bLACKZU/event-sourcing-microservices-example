@@ -108,7 +108,7 @@ microservices:
   - name: edge-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-edge-service
-      tag: latest
+      tag: v1
       labels:
         app: edge-service
     service:
