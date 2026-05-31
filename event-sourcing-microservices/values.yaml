@@ -36,7 +36,7 @@ microservices:
   - name: friend-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-friend-service
-      tag: v5
+      tag: v6
       labels:
         app: friend-service
     service:
@@ -53,7 +53,7 @@ microservices:
       - name: POSTGRES_PASSWORD
         valueFrom:
           secretKeyRef:
-            name: cqrs-postgresql-secrets 
+            name: cqrs-postgresql-secrets
             key: postgresql-password
     serviceAccount:
       create: true
@@ -64,7 +64,7 @@ microservices:
   - name: recommendation-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-recommendation-service
-      tag: v5
+      tag: v6
       labels:
         app: recommendation-service
     service:
