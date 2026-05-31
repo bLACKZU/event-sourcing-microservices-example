@@ -108,7 +108,7 @@ microservices:
   - name: edge-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-edge-service
-      tag: v1
+      tag: v3
       labels:
         app: edge-service
     service:
@@ -198,6 +198,10 @@ kafka:
     replicaCount: 1
     persistence:
       enabled: true
+    extraConfig: |
+      offsets.topic.replication.factor=1
+      transaction.state.log.replication.factor=1
+      transaction.state.log.min.isr=1
   listeners:
     client:
       protocol: PLAINTEXT
