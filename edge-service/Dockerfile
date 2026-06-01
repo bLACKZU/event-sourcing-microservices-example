@@ -13,8 +13,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests -pl edge-s
 
 FROM eclipse-temurin:21-jre 
 WORKDIR /app
-ARG JAR_FILE
-COPY --from=builder /app/edge-service/target/${JAR_FILE} app.jar
+COPY --from=builder /app/edge-service/target/*.jar app.jar
 RUN groupadd -r -g 2000 java && useradd -m -d /home/java/ -u 2000 -r -g java java
 RUN chown -R java:java /app
 USER java

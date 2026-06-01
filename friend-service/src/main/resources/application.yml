@@ -103,6 +103,16 @@ spring:
     activate:
       on-profile: kubernetes
   cloud:
+    kubernetes:
+      discovery:
+        enabled: false
+    discovery:
+      client:
+        simple:
+          instances:
+            user-service:
+              - uri: http://cqrs-event-sourcing-microservices-user-service:8120
+                service-id: user-service
     stream:
       kafka:
         binder:

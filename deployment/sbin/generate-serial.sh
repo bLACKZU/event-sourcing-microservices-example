@@ -60,10 +60,12 @@ while read fullname; do
   [[ "$USER_ID" != "null" ]] && IDS+=("${USER_ID}")
 done <$DIR/names-15.txt
 
-while read id; do
-  echo ${id} | jq .;
-  IDS+=($(echo ${id} | jq -r .id));
-done <./temp.txt
+if [ -f ./temp.txt ]; then
+  while read id; do
+    echo ${id} | jq .;
+    IDS+=($(echo ${id} | jq -r .id));
+  done <./temp.txt
+fi
 
 echo -n "added ids: "
 for i in "${IDS[@]}"

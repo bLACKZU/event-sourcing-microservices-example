@@ -106,7 +106,7 @@ spring:
           enabled: false
       routes:
       - id: friend-service
-        uri: lb://cqrs-event-sourcing-microservices-friend-service
+        uri: http://cqrs-event-sourcing-microservices-friend-service:8100
         predicates:
         - name: Path
           args:
@@ -117,7 +117,7 @@ spring:
             regexp: "/friend/(?<remaining>.*)"
             replacement: "/${remaining}"
       - id: user-service
-        uri: lb://cqrs-event-sourcing-microservices-user-service
+        uri: http://cqrs-event-sourcing-microservices-user-service:8120
         predicates:
         - name: Path
           args:
@@ -128,7 +128,7 @@ spring:
             regexp: "/user/(?<remaining>.*)"
             replacement: "/${remaining}"
       - id: recommendation-service
-        uri: lb://cqrs-event-sourcing-microservices-recommendation-service
+        uri: http://cqrs-event-sourcing-microservices-recommendation-service:8110
         predicates:
         - name: Path
           args:
