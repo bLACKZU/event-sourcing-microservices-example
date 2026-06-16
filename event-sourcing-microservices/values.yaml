@@ -2,11 +2,14 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+grafana:
+  enabled: true
+
 microservices:
   - name: user-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-user-service
-      tag: v5
+      tag: v7
       labels:
         app: user-service
     service:
@@ -36,7 +39,7 @@ microservices:
   - name: friend-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-friend-service
-      tag: v6
+      tag: v7
       labels:
         app: friend-service
     service:
@@ -64,7 +67,7 @@ microservices:
   - name: recommendation-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-recommendation-service
-      tag: v6
+      tag: v7
       labels:
         app: recommendation-service
     service:
@@ -108,7 +111,7 @@ microservices:
   - name: edge-service
     image:
       repository: blackzu69/event-sourcing-microservices-example-edge-service
-      tag: v3
+      tag: v7
       labels:
         app: edge-service
     service:

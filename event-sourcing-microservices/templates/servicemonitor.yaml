@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "event-sourcing-microservices.fullname" . }}
+  labels:
+    release: monitoring
+spec:
+  jobLabel: app
+  namespaceSelector:
+    matchNames:
+      - default
+  selector:
+    matchLabels:
+      app.kubernetes.io/managed-by: Helm
+  endpoints:
+    - port: http
+      path: /actuator/prometheus
+      interval: 30s
