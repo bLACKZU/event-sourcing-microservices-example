@@ -88,7 +88,7 @@ spring:
           brokers: "kafka:9092"
 ribbon.eureka.enabled: false
 eureka.client.enabled: false
-prometheus.push.enabled: false
+prometheus.push.enabled: true
 ---
 spring:
   profiles: test

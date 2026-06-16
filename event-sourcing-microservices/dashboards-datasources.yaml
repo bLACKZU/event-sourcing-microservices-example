@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cqrs-grafana-datasource-domain
+  namespace: monitoring
+  labels:
+    grafana_datasource: "1"
+data:
+  domain-datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Users
+        type: postgres
+        access: proxy
+        url: pgpool-svc.default.svc.cluster.local:5432
+        database: userdb
+        user: postgres
+        secureJsonData:
+          password: "Welcome@123"
+        jsonData:
+          sslmode: disable
+          postgresVersion: 1500
+        isDefault: false
+        editable: true
+      - name: Friends
+        type: postgres
+        access: proxy
+        url: pgpool-svc.default.svc.cluster.local:5432
+        database: frienddb
+        user: postgres
+        secureJsonData:
+          password: "Welcome@123"
+        jsonData:
+          sslmode: disable
+          postgresVersion: 1500
+        isDefault: false
+        editable: true
